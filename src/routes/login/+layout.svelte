@@ -6,7 +6,7 @@
 <AnimatedRoute>
   <main
     class="card w-4/6 bg-neutral text-neutral-content mx-auto my-11 max-w-xl flex justify-center"
-    style="height: 100px;"
+    style="height: 140px;"
   >
     <div class="card-body items-center text-center">
       <slot />
