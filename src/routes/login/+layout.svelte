@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import AnimatedRoute from "$lib/components/AnimatedRoute.svelte";
+  import AuthCheck from "$lib/components/AuthCheck.svelte";
 </script>
 
 <AnimatedRoute>
@@ -9,7 +10,14 @@
     style="height: 140px;"
   >
     <div class="card-body items-center text-center">
-      <slot />
+      <!-- Enable authchecks in username and photo route -->
+      {#if $page.route.id?.match(/username|photo/g)}
+        <AuthCheck>
+          <slot />
+        </AuthCheck>
+      {:else}
+        <slot />
+      {/if}
     </div>
   </main>
 </AnimatedRoute>
