@@ -27,7 +27,27 @@
   }
 
   async function confirmUsername() {
-    // TODO
+    console.log("confirming username", username);
+    const batch = writeBatch(db);
+    batch.set(doc(db, "usernames", username), { uid: $user?.uid });
+    batch.set(doc(db, "users", $user!.uid), {
+      username,
+      photoURL: $user?.photoURL ?? null,
+      published: true,
+      bio: "I am the Walrus",
+      links: [
+        {
+          title: "Test Link",
+          url: "https://kung.foo",
+          icon: "custom",
+        },
+      ],
+    });
+
+    await batch.commit();
+
+    username = "";
+    isAvailable = false;
   }
 </script>
 
@@ -42,7 +62,9 @@
 
   <!-- <p>Is available? {isAvailable}</p> -->
   {#if isAvailable}
-    <button class="btn btn-success my-3">Confirm username </button>
+    <button class="btn btn-success my-3" on:click={confirmUsername}
+      >Confirm username
+    </button>
   {:else}
     <button class="btn btn-error my-3">Not Available</button>
   {/if}
