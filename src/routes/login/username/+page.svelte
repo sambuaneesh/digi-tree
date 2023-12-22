@@ -7,6 +7,7 @@
   let loading = false;
   let isAvailable = false;
 
+  // debounceTimer means we only check availability after the user has stopped typing
   let debounceTimer: NodeJS.Timeout;
 
   async function checkAvailability() {
@@ -34,11 +35,11 @@
       username,
       photoURL: $user?.photoURL ?? null,
       published: true,
-      bio: "I am the Walrus",
+      bio: "I am the GOAT",
       links: [
         {
           title: "Test Link",
-          url: "https://kung.foo",
+          url: "https://tbd",
           icon: "custom",
         },
       ],
