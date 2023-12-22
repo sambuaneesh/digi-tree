@@ -1,8 +1,9 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { doc, getFirestore, onSnapshot } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 import { userStore } from "sveltefire";
+import { writable } from "svelte/store";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAfWQESssUfuYFYO6-rItnbh6mtxGva9Js",
@@ -21,3 +22,14 @@ export const auth = getAuth();
 export const storage = getStorage();
 
 export const user = userStore(auth);
+
+export const userData = writable<any>(null);
+
+user.subscribe((user) => {
+  if (user) {
+    const docRef = doc(db, `users/${user.uid}`);
+    onSnapshot(docRef, (snapshot) => {
+      userData.set(snapshot.data());
+    });
+  }
+});
