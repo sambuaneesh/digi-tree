@@ -9,6 +9,9 @@
   - [Project Description](#project-description)
   - [Project Details](#project-details)
   - [Backend Infrastructure](#backend-infrastructure)
+- [Setting up Firebase](#setting-up-firebase)
+  - [Firestore Database Rules](#firestore-database-rules)
+  - [Firestore Storage Rules](#firestore-storage-rules)
 
 ## Local Installation Guide
 
@@ -69,3 +72,60 @@ The project seamlessly integrates Firebase as a Backend as a Service (BaaS) for 
 
 - **Authentication:** Firebase handles user authentication, ensuring a secure login experience.
 - **Database:** Firestore, a NoSQL database by Firebase, is employed to efficiently store and manage client information.
+
+---
+
+## Setting up Firebase
+
+- Prior to starting the project you need to setup Cloud Firestore database and Firestore Storage
+- After initializing those both, apply the following rules in each
+
+### Firestore Database Rules
+
+```js
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+      match /users/{userId} {
+      	allow read;
+        allow create: if isValidUser(userId);
+        allow update: if request.auth.uid == userId;
+      }
+
+      match /usernames/{username} {
+      	allow read;
+        allow create: if isValidUsername(username);
+      }
+
+      function isValidUsername(username) {
+				let isOwner = request.auth.uid == request.resource.data.uid;
+        let isValidLength = username.size() >= 3 && username.size() <= 15;
+        let isValidUserDoc = getAfter(/databases/$(database)/documents/users/$(request.auth.uid)).data.username == username;
+
+        return isOwner && isValidLength && isValidUserDoc;
+      }
+
+      function isValidUser(userId) {
+        let isOwner = request.auth.uid == userId;
+      	let username = request.resource.data.username;
+        let createdValidUsername = existsAfter(/databases/$(database)/documents/usernames/$(username));
+
+        return isOwner && createdValidUsername;
+      }
+  }
+}
+```
+
+### Firestore Storage Rules
+
+```js
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /users/{userId}/{allPaths=**} {
+      allow read;
+      allow write: if userId == request.auth.uid;
+    }
+  }
+}
+```
