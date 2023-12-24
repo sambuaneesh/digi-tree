@@ -39,7 +39,7 @@
       links: [
         {
           title: "Test Link",
-          url: "https://tbd",
+          url: "https://digi-tree.vercel.app",
           icon: "custom",
         },
       ],
